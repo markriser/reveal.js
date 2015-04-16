@@ -103,6 +103,14 @@
 			// Enable slide navigation via mouse wheel
 			mouseWheel: false,
 
+			// Function to intercept navigation-
+			// Called before any navigation changes happen.
+			// This function can return false to prevent navigation from occurring,
+			// or true to allow navigation.
+			//
+			// The function is called with the direction of navigation 'left', 'right', 'up', 'down'
+			interceptNavigationFunction: undefined,
+
 			// Apply a 3D roll to links on hover
 			rollingLinks: false,
 
@@ -3379,48 +3387,56 @@
 
 	function navigateLeft() {
 
-		// Reverse for RTL
-		if( config.rtl ) {
-			if( ( isOverview() || nextFragment() === false ) && availableRoutes().left ) {
-				slide( indexh + 1 );
+		if (!config.interceptNavigationFunction || config.interceptNavigationFunction('left')) {
+			// Reverse for RTL
+			if( config.rtl ) {
+				if( ( isOverview() || nextFragment() === false ) && availableRoutes().left ) {
+					slide( indexh + 1 );
+				}
 			}
-		}
-		// Normal navigation
-		else if( ( isOverview() || previousFragment() === false ) && availableRoutes().left ) {
-			slide( indexh - 1 );
+			// Normal navigation
+			else if( ( isOverview() || previousFragment() === false ) && availableRoutes().left ) {
+				slide( indexh - 1 );
+			}
 		}
 
 	}
 
 	function navigateRight() {
 
-		// Reverse for RTL
-		if( config.rtl ) {
-			if( ( isOverview() || previousFragment() === false ) && availableRoutes().right ) {
-				slide( indexh - 1 );
+		if (!config.interceptNavigationFunction || config.interceptNavigationFunction('right')) {
+			// Reverse for RTL
+			if( config.rtl ) {
+				if( ( isOverview() || previousFragment() === false ) && availableRoutes().right ) {
+					slide( indexh - 1 );
+				}
 			}
-		}
-		// Normal navigation
-		else if( ( isOverview() || nextFragment() === false ) && availableRoutes().right ) {
-			slide( indexh + 1 );
+			// Normal navigation
+			else if( ( isOverview() || nextFragment() === false ) && availableRoutes().right ) {
+				slide( indexh + 1 );
+			}
 		}
 
 	}
 
 	function navigateUp() {
 
-		// Prioritize hiding fragments
-		if( ( isOverview() || previousFragment() === false ) && availableRoutes().up ) {
-			slide( indexh, indexv - 1 );
+		if (!config.interceptNavigationFunction || config.interceptNavigationFunction('up')) {
+			// Prioritize hiding fragments
+			if( ( isOverview() || previousFragment() === false ) && availableRoutes().up ) {
+				slide( indexh, indexv - 1 );
+			}
 		}
 
 	}
 
 	function navigateDown() {
 
-		// Prioritize revealing fragments
-		if( ( isOverview() || nextFragment() === false ) && availableRoutes().down ) {
-			slide( indexh, indexv + 1 );
+		if (!config.interceptNavigationFunction || config.interceptNavigationFunction('down')) {
+			// Prioritize revealing fragments
+			if( ( isOverview() || nextFragment() === false ) && availableRoutes().down ) {
+				slide( indexh, indexv + 1 );
+			}
 		}
 
 	}
@@ -3433,26 +3449,28 @@
 	 */
 	function navigatePrev() {
 
-		// Prioritize revealing fragments
-		if( previousFragment() === false ) {
-			if( availableRoutes().up ) {
-				navigateUp();
-			}
-			else {
-				// Fetch the previous horizontal slide, if there is one
-				var previousSlide;
-
-				if( config.rtl ) {
-					previousSlide = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.future' ) ).pop();
+		if (!config.interceptNavigationFunction || config.interceptNavigationFunction('prev')) {
+			// Prioritize revealing fragments
+			if( previousFragment() === false ) {
+				if( availableRoutes().up ) {
+					navigateUp();
 				}
 				else {
-					previousSlide = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.past' ) ).pop();
-				}
+					// Fetch the previous horizontal slide, if there is one
+					var previousSlide;
 
-				if( previousSlide ) {
-					var v = ( previousSlide.querySelectorAll( 'section' ).length - 1 ) || undefined;
-					var h = indexh - 1;
-					slide( h, v );
+					if( config.rtl ) {
+						previousSlide = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.future' ) ).pop();
+					}
+					else {
+						previousSlide = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.past' ) ).pop();
+					}
+
+					if( previousSlide ) {
+						var v = ( previousSlide.querySelectorAll( 'section' ).length - 1 ) || undefined;
+						var h = indexh - 1;
+						slide( h, v );
+					}
 				}
 			}
 		}
