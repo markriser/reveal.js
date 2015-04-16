@@ -136,9 +136,6 @@
 			// Parallax background size
 			parallaxBackgroundSize: '', // CSS syntax, e.g. "3000px 2000px"
 
-			// Respond to clicks on the progress bar?
-			respondProgressClick: true,
-			
 			// Number of slides away from the current that are visible
 			viewDistance: 3,
 
@@ -3823,16 +3820,16 @@
 	 * ( clickX / presentationWidth ) * numberOfSlides
 	 */
 	function onProgressClicked( event ) {
-		if (config.respondProgressClick) {
-			onUserInput( event );
 
-			event.preventDefault();
+		onUserInput( event );
 
-			var slidesTotal = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).length;
-			var slideIndex = Math.floor( ( event.clientX / dom.wrapper.offsetWidth ) * slidesTotal );
+		event.preventDefault();
 
-			slide( slideIndex );
-		}
+		var slidesTotal = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).length;
+		var slideIndex = Math.floor( ( event.clientX / dom.wrapper.offsetWidth ) * slidesTotal );
+
+		slide( slideIndex );
+
 	}
 
 	/**
